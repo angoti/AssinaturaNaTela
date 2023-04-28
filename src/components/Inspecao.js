@@ -1,48 +1,57 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { RadioButton, Text, Button } from 'react-native-paper';
-import { PDFDocument, rgb } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import RNFS from 'react-native-fs';
 
-const Inspecao = () => {
+const Inspecao = ({ setFile, navigation }) => {
   const [inspectionA, setInspectionA] = useState('non-compliant');
   const [inspectionB, setInspectionB] = useState('non-compliant');
   const [inspectionC, setInspectionC] = useState('non-compliant');
 
-  const handleFinishInspection = () => {
-    const pdfDoc = new PDFDocument();
-
+  const handleFinishInspection = async () => {
+    const pdfDoc = await PDFDocument.create();
+    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
     const page = pdfDoc.addPage([600, 400]);
     const fontSize = 14;
 
-    pdfDoc.embedFont(PDFDocument.Font.Helvetica).then(font => {
-      page.drawText(`Inspeção A: ${inspectionA}`, {
-        x: 50,
-        y: 350,
-        font,
-        size: fontSize,
-      });
+    page.drawText(`Inspeção A: ${inspectionA}`, {
+      x: 50,
+      y: 350,
+      font: timesRomanFont,
+      size: fontSize,
+      color: rgb(0, 0.53, 0.71),
+    });
 
-      page.drawText(`Inspeção B: ${inspectionB}`, {
-        x: 50,
-        y: 320,
-        font,
-        size: fontSize,
-      });
+    page.drawText(`Inspeção B: ${inspectionB}`, {
+      x: 50,
+      y: 320,
+      font: timesRomanFont,
+      size: fontSize,
+      color: rgb(0, 0.53, 0.71),
+    });
 
-      page.drawText(`Inspeção C: ${inspectionC}`, {
-        x: 50,
-        y: 290,
-        font,
-        size: fontSize,
-      });
+    page.drawText(`Inspeção C: ${inspectionC}`, {
+      x: 50,
+      y: 290,
+      font: timesRomanFont,
+      size: fontSize,
+      color: rgb(0, 0.53, 0.71),
+    });
 
-      pdfDoc.save().then(pdfBytes => {
-        const filePath = `${RNFS.DocumentDirectoryPath}/inspection_results.pdf`;
-        RNFS.writeFile(filePath, pdfBytes, 'binary').then(() => {
-          console.log(`Resultados da inspeção salvos em: ${filePath}`);
+    pdfDoc.saveAsBase64().then(pdfBytes => {
+      const filePath = `${RNFS.ExternalDirectoryPath}/inspection_results.pdf`;
+      console.log('-----> ', filePath);
+      console.log('-----> ', pdfBytes);
+      RNFS.writeFile(filePath, pdfBytes, 'base64')
+        .then(success => {
+          console.log('FILE WRITTEN! -> ', filePath);
+          setFile(filePath);
+          navigation.navigate('Home')
+        })
+        .catch(err => {
+          console.log(err.message);
         });
-      });
     });
   };
 

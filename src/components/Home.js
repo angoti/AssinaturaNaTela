@@ -18,6 +18,7 @@ const Home = ({ navigation }) => {
         style={styles.button}>
         Assinar Inspeção
       </Button>
+     
     </View>
   );
 };
