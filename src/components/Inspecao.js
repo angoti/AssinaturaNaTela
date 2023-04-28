@@ -9,38 +9,41 @@ const Inspecao = () => {
   const [inspectionB, setInspectionB] = useState('non-compliant');
   const [inspectionC, setInspectionC] = useState('non-compliant');
 
-  const handleFinishInspection = async () => {
+  const handleFinishInspection = () => {
     const pdfDoc = new PDFDocument();
 
     const page = pdfDoc.addPage([600, 400]);
-    const font = await pdfDoc.embedFont(PDFDocument.Font.Helvetica);
     const fontSize = 14;
 
-    page.drawText(`Inspeção A: ${inspectionA}`, {
-      x: 50,
-      y: 350,
-      font,
-      size: fontSize,
-    });
+    pdfDoc.embedFont(PDFDocument.Font.Helvetica).then(font => {
+      page.drawText(`Inspeção A: ${inspectionA}`, {
+        x: 50,
+        y: 350,
+        font,
+        size: fontSize,
+      });
 
-    page.drawText(`Inspeção B: ${inspectionB}`, {
-      x: 50,
-      y: 320,
-      font,
-      size: fontSize,
-    });
+      page.drawText(`Inspeção B: ${inspectionB}`, {
+        x: 50,
+        y: 320,
+        font,
+        size: fontSize,
+      });
 
-    page.drawText(`Inspeção C: ${inspectionC}`, {
-      x: 50,
-      y: 290,
-      font,
-      size: fontSize,
-    });
+      page.drawText(`Inspeção C: ${inspectionC}`, {
+        x: 50,
+        y: 290,
+        font,
+        size: fontSize,
+      });
 
-    const pdfBytes = await pdfDoc.save();
-    const filePath = `${RNFS.DocumentDirectoryPath}/inspection_results.pdf`;
-    await RNFS.writeFile(filePath, pdfBytes, 'binary');
-    console.log(`Resultados da inspeção salvos em: ${filePath}`);
+      pdfDoc.save().then(pdfBytes => {
+        const filePath = `${RNFS.DocumentDirectoryPath}/inspection_results.pdf`;
+        RNFS.writeFile(filePath, pdfBytes, 'binary').then(() => {
+          console.log(`Resultados da inspeção salvos em: ${filePath}`);
+        });
+      });
+    });
   };
 
   return (
