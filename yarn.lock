@@ -6032,7 +6032,7 @@
     "prop-types" "^15.7.2"
     "yargs" "^16.1.1"
 
-"react-native-webview@>11.18.1":
+"react-native-webview@^12.0.2", "react-native-webview@>11.18.1":
   "integrity" "sha512-vEnFOgVIYaUAQb437BOZdwTteUv3dkXkYOajalUkMDHNz91Zb35HaG6L49uUSFp4qYw46y/U3licKS1BOISDrg=="
   "resolved" "https://registry.npmjs.org/react-native-webview/-/react-native-webview-12.0.2.tgz"
   "version" "12.0.2"
